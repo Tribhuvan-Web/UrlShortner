@@ -2,15 +2,11 @@ package com.url.shortner.dtos;
 
 import lombok.Data;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Data
-public class UrlMappingDTO {
+public class ClickEventDTO {
 
-    private Long id;
-    private String originalUrl;
-    private String shortUrl;
-    private int clickCount;
-    private LocalDateTime createdDate;
-    private String username;
+    private LocalDate clickDate;
+    private Long count;
 }
