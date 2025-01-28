@@ -18,7 +18,7 @@ public class URLMapping {
 
     private LocalDateTime createdDate;
 
-    @ManyToOne
+    @ManyToOne //Many URL belong to the same user
     @JoinColumn(name = "user_id")
     private User user;
 
