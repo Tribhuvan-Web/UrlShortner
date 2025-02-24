@@ -16,4 +16,6 @@ public class ClickEvent {
     @ManyToOne
     @JoinColumn(name = "url_mapping_id")
     private  URLMapping urlMapping;
+
+
 }

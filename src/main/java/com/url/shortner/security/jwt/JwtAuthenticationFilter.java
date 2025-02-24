@@ -18,14 +18,16 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @SuppressWarnings("null")
 @Component
+//It aims to guarantee single request per filter
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    @Autowired 
+    @Autowired
+    //It creates an object for the class
     private JwtUtils jwtTokenProvider;
 
     @Autowired
     private UserDetailsService userDetailsService;
-
+    
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -33,10 +35,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         try {
             // GET JWT From the header
-
             String jwt = jwtTokenProvider.getJwtFromHeader(request);
 
-            // VAlidate Token
+            // Validate Token
             if (jwt != null && jwtTokenProvider.validateToken(jwt)) {
                 String username = jwtTokenProvider.getUserNameFromJwtToken(jwt);
 

@@ -25,15 +25,15 @@ public class UrlMappingController {
     private UrlMappingService urlMappingService;
     private UserService userService;
 
-    //{"Original Url":"https://google.com"}
+    // {"Original Url":"https://google.com"}
     @PostMapping("/shorten")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<UrlMappingDTO> createShortUrl(@RequestBody Map<String, String> request,
-                                                        Principal principal) {
+            Principal principal) {
         String originalUrl = request.get("originalUrl");
         User user = userService.findByUsername(principal.getName());
 
-        //Call service method
+        // Call service method
         UrlMappingDTO urlMappingDTO = urlMappingService.createShortUrl(originalUrl, user);
         return ResponseEntity.ok(urlMappingDTO);
     }
@@ -49,8 +49,8 @@ public class UrlMappingController {
     @GetMapping("/analytics/{shortUrl}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<List<ClickEventDTO>> getUrlAnalytics(@PathVariable String shortUrl,
-                                                                @RequestParam("startDate") String startDate,
-                                                               @RequestParam("endDate") String endDate) {
+            @RequestParam("startDate") String startDate,
+            @RequestParam("endDate") String endDate) {
         DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
         LocalDateTime start = LocalDateTime.parse(startDate, formatter);
         LocalDateTime end = LocalDateTime.parse(endDate, formatter);
@@ -61,8 +61,8 @@ public class UrlMappingController {
     @GetMapping("/totalClicks")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Map<LocalDate, Long>> getTotalClicksByDate(Principal principal,
-                                                                     @RequestParam("startDate") String startDate,
-                                                                     @RequestParam("endDate") String endDate) {
+            @RequestParam("startDate") String startDate,
+            @RequestParam("endDate") String endDate) {
         User user = userService.findByUsername(principal.getName());
         DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
         LocalDate start = LocalDate.parse(startDate, formatter);

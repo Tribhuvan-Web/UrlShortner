@@ -9,7 +9,7 @@ import java.util.List;
 @Entity
 @Data
 public class URLMapping {
-    @Id
+    @Id 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String originalUrl;
@@ -17,8 +17,8 @@ public class URLMapping {
     private  int clickCount = 0 ;
 
     private LocalDateTime createdDate;
-
-    @ManyToOne //Many URL belong to the same user
+ 
+    @ManyToOne //Many URL belong to the single user
     @JoinColumn(name = "user_id")
     private User user;
 
