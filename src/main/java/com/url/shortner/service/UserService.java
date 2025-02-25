@@ -1,5 +1,6 @@
 package com.url.shortner.service;
 
+import com.url.shortner.Exception.UserNameAlreadyExists;
 import com.url.shortner.dtos.LoginRequest;
 import com.url.shortner.models.User;
 import com.url.shortner.repository.UserRepository;
@@ -24,6 +25,11 @@ public class UserService {
     private JwtUtils jwtUtils;
 
     public User registerUser(User user) {
+
+        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+            throw new UserNameAlreadyExists("Username already exists");
+        }
+
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
@@ -40,7 +46,6 @@ public class UserService {
 
     public User findByUsername(String name) {
         return userRepository.findByUsername(name).orElseThrow(
-                () -> new UsernameNotFoundException("Username " + name + " not found")
-        );
+                () -> new UsernameNotFoundException("Username " + name + " not found"));
     }
 }
