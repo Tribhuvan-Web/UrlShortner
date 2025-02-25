@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -20,13 +21,18 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 public class UrlMappingService {
+    private static final Map<String, String> shortUrlMap = new HashMap<>();
 
     private UrlMappingRepository urlMappingRepository;
 
     private ClickEventRepository clickEventRepository;
 
     public UrlMappingDTO createShortUrl(String originalUrl, User user) {
-        String shortUrl = generateShortUrl();
+        String shortUrl;
+        do {
+            shortUrl = generateShortUrl();
+        } while (shortUrlMap.containsKey(shortUrl));
+        shortUrlMap.put(shortUrl, originalUrl);
         URLMapping urlMapping = new URLMapping();
         urlMapping.setOriginalUrl(originalUrl);
         urlMapping.setShortUrl(shortUrl);
@@ -53,7 +59,7 @@ public class UrlMappingService {
 
         Random random = new Random();
         StringBuilder shortUrl = new StringBuilder(8);
-        
+
         for (int i = 0; i < 8; i++) {
             shortUrl.append(characters.charAt(random.nextInt(characters.length())));
         }
@@ -69,7 +75,8 @@ public class UrlMappingService {
         URLMapping urlMapping = urlMappingRepository.findByShortUrl(shortUrl);
         if (urlMapping != null) {
             return clickEventRepository.findByUrlMappingAndClickDateBetween(urlMapping, start, end)
-                    .stream().collect(Collectors.groupingBy(click -> click.getClickDate().toLocalDate(), Collectors.counting()))
+                    .stream()
+                    .collect(Collectors.groupingBy(click -> click.getClickDate().toLocalDate(), Collectors.counting()))
                     .entrySet().stream().map(entry -> {
                         ClickEventDTO clickEventDTO = new ClickEventDTO();
                         clickEventDTO.setClickDate(entry.getKey());
@@ -83,7 +90,8 @@ public class UrlMappingService {
 
     public Map<LocalDate, Long> getTotalClicksByUserAndDate(User user, LocalDate start, LocalDate end) {
         List<URLMapping> urlMappings = urlMappingRepository.findByUser(user);
-        List<ClickEvent> clickEvents = clickEventRepository.findByUrlMappingInAndClickDateBetween(urlMappings, start.atStartOfDay(), end.plusDays(1).atStartOfDay());
+        List<ClickEvent> clickEvents = clickEventRepository.findByUrlMappingInAndClickDateBetween(urlMappings,
+                start.atStartOfDay(), end.plusDays(1).atStartOfDay());
         return clickEvents.stream()
                 .collect(Collectors.groupingBy(click -> click.getClickDate().toLocalDate(), Collectors.counting()));
     }
@@ -94,7 +102,7 @@ public class UrlMappingService {
             urlMapping.setClickCount(urlMapping.getClickCount() + 1);
             urlMappingRepository.save(urlMapping);
 
-            //Record click Event
+            // Record click Event
             ClickEvent clickEvent = new ClickEvent();
             clickEvent.setClickDate(LocalDateTime.now());
             clickEvent.setUrlMapping(urlMapping);

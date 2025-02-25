@@ -24,8 +24,8 @@ public class UserDetailsImpl implements UserDetails {
 
     private Collection<? extends GrantedAuthority> authorities;
 
-    public UserDetailsImpl(Long id, String username, String email, Collection<? extends GrantedAuthority> authorities,
-                           String password) {
+    public UserDetailsImpl(Long id, String username, String email,
+            String password, Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -39,9 +39,8 @@ public class UserDetailsImpl implements UserDetails {
                 user.getId(),
                 user.getUsername(),
                 user.getEmail(),
-                Collections.singletonList(authority),
-                user.getPassword()
-        );
+                user.getPassword(),
+                Collections.singletonList(authority));
     }
 
     @Override
