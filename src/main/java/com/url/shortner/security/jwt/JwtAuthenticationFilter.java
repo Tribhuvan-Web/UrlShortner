@@ -18,20 +18,20 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @SuppressWarnings("null")
 @Component
-//It aims to guarantee single request per filter
+// It aims to guarantee single filter per request
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
-    //It creates an object for the class
+    // It creates an object for the class
     private JwtUtils jwtTokenProvider;
 
     @Autowired
     private UserDetailsService userDetailsService;
-    
+
     @Override
     protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
+            HttpServletResponse response,
+            FilterChain filterChain) throws ServletException, IOException {
 
         try {
             // GET JWT From the header

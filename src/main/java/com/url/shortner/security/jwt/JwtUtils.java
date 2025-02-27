@@ -22,11 +22,10 @@ public class JwtUtils {
     @Value("${jwt.expiration}")
     private int jwtExpirations;
 
-    //Authorization > Bearer >  <Token>
+    // Authorization > Bearer > <Token>
     public String getJwtFromHeader(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
-        return (bearerToken != null && bearerToken.startsWith("Bearer")) ? bearerToken.substring(7
-        ) : null;
+        return (bearerToken != null && bearerToken.startsWith("Bearer")) ? bearerToken.substring(7) : null;
     }
 
     public String generateToken(UserDetailsImpl userDetails) {
