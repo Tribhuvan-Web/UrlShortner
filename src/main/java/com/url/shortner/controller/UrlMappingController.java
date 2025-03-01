@@ -5,6 +5,8 @@ import com.url.shortner.dtos.UrlMappingDTO;
 import com.url.shortner.models.User;
 import com.url.shortner.service.UrlMappingService;
 import com.url.shortner.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,6 +22,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/urls")
 @AllArgsConstructor
+@Tag(name = "URl Mapping",description = "Url Mapping related APIs")
 public class UrlMappingController {
 
     private UrlMappingService urlMappingService;
@@ -28,6 +31,7 @@ public class UrlMappingController {
     // {"Original Url":"https://google.com"}
     @PostMapping("/shorten")
     @PreAuthorize("hasRole('USER')")
+    @Operation(summary = "Create a short url")
     public ResponseEntity<UrlMappingDTO> createShortUrl(@RequestBody Map<String, String> request,
             Principal principal) {
         String originalUrl = request.get("originalUrl");
@@ -40,6 +44,7 @@ public class UrlMappingController {
 
     @GetMapping("/myurls")
     @PreAuthorize("hasRole('USER')")
+    @Operation(summary = "Get all urls for a user")
     public ResponseEntity<List<UrlMappingDTO>> getUserUrls(Principal principal) {
         User user = userService.findByUsername(principal.getName());
         List<UrlMappingDTO> urls = urlMappingService.getUrlByUser(user);
@@ -48,6 +53,7 @@ public class UrlMappingController {
 
     @GetMapping("/analytics/{shortUrl}")
     @PreAuthorize("hasRole('USER')")
+    @Operation(summary = "Get click analytics for a short url")
     public ResponseEntity<List<ClickEventDTO>> getUrlAnalytics(@PathVariable String shortUrl,
             @RequestParam("startDate") String startDate,
             @RequestParam("endDate") String endDate) {
@@ -60,6 +66,7 @@ public class UrlMappingController {
 
     @GetMapping("/totalClicks")
     @PreAuthorize("hasRole('USER')")
+    @Operation(summary = "Get total clicks for a user")
     public ResponseEntity<Map<LocalDate, Long>> getTotalClicksByDate(Principal principal,
             @RequestParam("startDate") String startDate,
             @RequestParam("endDate") String endDate) {

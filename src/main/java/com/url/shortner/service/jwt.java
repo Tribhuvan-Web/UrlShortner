@@ -46,12 +46,14 @@ public class jwt {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtExpirations));
     }
 
+    @SuppressWarnings("unused")
     private String getUserNameFromJWTToken(String token) {
         return Jwts.parser().verifyWith((SecretKey) key())
                 .build().parseSignedClaims(token)
                 .getPayload().getSubject();
     }
 
+    @SuppressWarnings("unused")
     private boolean validateToken(String authToken) {
         try {
             Jwts.parser().verifyWith((SecretKey) key()).build().parseSignedClaims(authToken);

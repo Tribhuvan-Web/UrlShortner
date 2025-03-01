@@ -6,6 +6,8 @@ import com.url.shortner.dtos.RegisterRequest;
 import com.url.shortner.models.User;
 import com.url.shortner.service.UserService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 
 import org.springframework.http.HttpStatus;
@@ -18,16 +20,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/auth")
 @AllArgsConstructor
+@Tag(name = "Authentication",description = "Authentication related APIs")
 public class AuthController {
 
     private UserService userService;
 
     @PostMapping("/public/login")
+    @Operation(summary = "Login user")
     public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) {
         return ResponseEntity.ok(userService.authenticateUser(loginRequest));
     }
 
     @PostMapping("/public/register")
+    @Operation(summary = "Register user")
     public ResponseEntity<?> registerUser(@RequestBody RegisterRequest registerRequest) {
         // Controllers for handling the user unique data
         try {
