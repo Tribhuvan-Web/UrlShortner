@@ -23,7 +23,7 @@ specification.
 - **Backend**: Spring Boot 3.x
 - **Security**: Spring Security + JWT
 - **Documentation**: OpenAPI 3.1
-- **Database**: H2 (Development), MySQL (Production-ready)
+- **Database**: MySQL
 - **Testing**: JUnit 5, Mockito
 
 ## Installation ⚙️
@@ -32,7 +32,7 @@ specification.
 
 - Java 17+
 - Maven 3.8+
-- MySQL 8.0+ (Optional)
+- MySQL 8.0+
 
 ### Steps
 
@@ -64,6 +64,13 @@ A robust URL shortening service with analytics and authentication capabilities.
 
 ## API Endpoints 📍
 
+### Authentication APIs 🔑
+
+| Method | Endpoint                    | Description             |
+|--------|-----------------------------|-------------------------|
+| POST   | `/api/auth/public/register` | Register new user       |
+| POST   | `/api/auth/public/login`    | Login and get JWT token |
+
 ### URL Mapping APIs
 
 | Method | Endpoint                         | Description                             |
@@ -73,12 +80,7 @@ A robust URL shortening service with analytics and authentication capabilities.
 | GET    | `/api/urls/myurls`               | Get all URLs created by current user    |
 | GET    | `/api/urls/analytics/{shortUrl}` | Get detailed analytics for short URL    |
 
-### Authentication APIs 🔑
 
-| Method | Endpoint                    | Description             |
-|--------|-----------------------------|-------------------------|
-| POST   | `/api/auth/public/register` | Register new user       |
-| POST   | `/api/auth/public/login`    | Login and get JWT token |
 
 ### Redirect API ↪️
 
