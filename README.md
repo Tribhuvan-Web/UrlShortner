@@ -92,4 +92,4 @@ All protected endpoints require JWT token in header:
 
 ```http
 Authorization: Bearer YOUR_JWT_TOKEN
-   git clone 
+   git clone
