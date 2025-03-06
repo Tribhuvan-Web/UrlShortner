@@ -1,5 +1,7 @@
 package com.url.shortner.service;
 
+import com.url.shortner.Exception.CustomAliasAlreadyExistsException;
+import com.url.shortner.Exception.ResourceNotFoundException;
 import com.url.shortner.dtos.ClickEventDTO;
 import com.url.shortner.dtos.UrlMappingDTO;
 import com.url.shortner.models.ClickEvent;
@@ -7,6 +9,7 @@ import com.url.shortner.models.URLMapping;
 import com.url.shortner.models.User;
 import com.url.shortner.repository.ClickEventRepository;
 import com.url.shortner.repository.UrlMappingRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -55,7 +58,7 @@ public class UrlMappingService {
 
     private String generateShortUrl() {
 
-        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz$&@";
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
         Random random = new Random();
         StringBuilder shortUrl = new StringBuilder(8);
@@ -109,5 +112,31 @@ public class UrlMappingService {
             clickEventRepository.save(clickEvent);
         }
         return urlMapping;
+    }
+
+    @Transactional
+    public void deleteUrl(Long urlId, User user) {
+        URLMapping urlMapping = urlMappingRepository.findById(urlId)
+                .orElseThrow(() -> new ResourceNotFoundException("URL not found with id: " + urlId));
+
+        clickEventRepository.deleteByUrlMapping(urlMapping);
+
+        urlMappingRepository.delete(urlMapping);
+    }
+
+    public UrlMappingDTO createCustomShortUrl(String originalUrl, User user, String customAlias) {
+        // Check for existing custom alias
+        if (urlMappingRepository.existsByShortUrl(customAlias)) {
+            throw new CustomAliasAlreadyExistsException();
+        }
+
+        URLMapping urlMapping = new URLMapping();
+        urlMapping.setOriginalUrl(originalUrl);
+        urlMapping.setShortUrl(customAlias);
+        urlMapping.setUser(user);
+        urlMapping.setCreatedDate(LocalDateTime.now());
+        urlMappingRepository.save(urlMapping);
+
+        return convertToDto(urlMapping);
     }
 }

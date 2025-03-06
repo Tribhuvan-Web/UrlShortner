@@ -12,5 +12,6 @@ import java.util.List;
 public interface ClickEventRepository extends JpaRepository<ClickEvent, Long> {
     List<ClickEvent> findByUrlMappingAndClickDateBetween(URLMapping urlMapping, LocalDateTime startDate, LocalDateTime endDate);
     List<ClickEvent> findByUrlMappingInAndClickDateBetween(List<URLMapping> urlMappings, LocalDateTime startDate, LocalDateTime endDate);
+    void deleteByUrlMapping(URLMapping urlMapping);
 
 }

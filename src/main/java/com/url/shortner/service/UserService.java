@@ -1,6 +1,7 @@
 package com.url.shortner.service;
 
 import com.url.shortner.Exception.UserNameAlreadyExists;
+import com.url.shortner.Exception.UserNameNotFound;
 import com.url.shortner.dtos.LoginRequest;
 import com.url.shortner.models.User;
 import com.url.shortner.repository.UserRepository;
@@ -36,13 +37,16 @@ public class UserService {
     }
 
     public JwtAuthenticationResponse authenticateUser(LoginRequest loginRequest) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        String jwt = jwtUtils.generateToken(userDetails);
-        return new JwtAuthenticationResponse(jwt);
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+            String jwt = jwtUtils.generateToken(userDetails);
+            return new JwtAuthenticationResponse(jwt);
+        } catch (UserNameNotFound e) {
+            throw new UserNameNotFound("Invalid username or password");
+        }
     }
 
     public User findByUsername(String name) {

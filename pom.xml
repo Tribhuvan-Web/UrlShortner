@@ -19,7 +19,11 @@
         <license/>
     </licenses>
     <developers>
-        <developer/>
+        <developer>
+            <id>Tribhuvan nath sagar</id>
+            <name>Tribhuvan</name>
+            <email>tribhuvannath4567@gmail.com</email>
+        </developer>
     </developers>
     <scm>
         <connection/>
