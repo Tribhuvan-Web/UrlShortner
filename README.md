@@ -1,96 +1,80 @@
-# URL Shortener 🔗
+# URL Shortener API - Spring Boot Application
 
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![OpenAPI 3.1](https://img.shields.io/badge/OpenAPI-3.1-green)](https://spec.openapis.org/oas/v3.1.0)
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen)](https://spring.io/projects/spring-boot)
+## Overview 
+A RESTful API for shortening URLs with analytics and user management. Compliant with OpenAPI 3.1.
 
-A high-performance URL shortening service with analytics and user authentication, built with Spring Boot and OpenAPI 3.1
-specification.
-
-## Features ✨
-
-- URL shortening with custom slugs
-- Click analytics tracking
-- User authentication (JWT)
-- RESTful API endpoints
-- Swagger/OpenAPI documentation
-- User-specific URL management
-- Total click statistics
-- Redirect tracking system
-
-## Tech Stack 🛠️
-
-- **Backend**: Spring Boot 3.x
-- **Security**: Spring Security + JWT
-- **Documentation**: OpenAPI 3.1
-- **Database**: MySQL
-- **Testing**: JUnit 5, Mockito
-
-## Installation ⚙️
-
-### Prerequisites
-
-- Java 17+
-- Maven 3.8+
-- MySQL 8.0+
-
-### Steps
-
-1. Clone the repository:
-   ```bash# URL Shortener API 🔗
-   https://github.com/Tribhuvan-Web/UrlShortner
-
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![OpenAPI 3.1](https://img.shields.io/badge/OAS-3.1-success)](https://spec.openapis.org/oas/v3.1.0)
-
-A robust URL shortening service with analytics and authentication capabilities.
-
+**Version**: 1.0  
 **Author**: Tribhuvan Nath  
-**API Documentation**: [/v3/api-docs](http://localhost:8080/v3/api-docs)  
-**Version**: 1.0
+**Docs**: `/v3/api-docs`  
+**Base URL**: `https://localhost:8080`
 
-## Features ✨
+---
 
-- URL shortening with custom slugs
-- Click analytics tracking
-- JWT-based authentication
-- User-specific URL management
-- Real-time click statistics
-- Automatic redirection system
+## API Endpoints
 
-## Servers 🌐
+### URL Management Controller
 
-- Local Development: `https://localhost:8080`
+| Method | Endpoint                      | Parameters               | Headers                          | Request Body                                | Description                     |
+|--------|-------------------------------|--------------------------|----------------------------------|---------------------------------------------|---------------------------------|
+| POST   | `/api/urls/shorten`           | None                     | `Authorization: Bearer {token}`  | `{ "originalUrl": "string" }`               | Generate short URL              |
+| POST   | `/api/urls/shorten/custom`    | None                     | `Authorization: Bearer {token}`  | `{ "originalUrl": "string", "customAlias": "string" }` | Create custom alias URL         |
+| GET    | `/api/urls/totalClicks`       | None                     | `Authorization: Bearer {token}`  | None                                        | Get user's total clicks         |
+| GET    | `/api/urls/myurls`            | None                     | `Authorization: Bearer {token}`  | None                                        | Get all user's URL mappings     |
+| GET    | `/api/urls/analytics/{shortUrl}` | `shortUrl` (path)     | `Authorization: Bearer {token}`  | None                                        | Get analytics for short URL     |
+| DELETE | `/api/urls/{id}`              | `id` (path)              | `Authorization: Bearer {token}`  | None                                        | Delete URL mapping by ID        |
 
-## API Endpoints 📍
+### Authentication Controller
 
-### Authentication APIs 🔑
+| Method | Endpoint                   | Parameters | Headers                | Request Body                                | Description         |
+|--------|----------------------------|------------|------------------------|---------------------------------------------|---------------------|
+| POST   | `/api/auth/public/register`| None       | `Content-Type: application/json` | `{ "username": "string", "password": "string" }` | User registration  |
+| POST   | `/api/auth/public/login`   | None       | `Content-Type: application/json` | `{ "username": "string", "password": "string" }` | User login         |
+| GET    | `/api/auth/username`       | None       | `Authorization: Bearer {token}`  | None                                        | Get current username|
 
-| Method | Endpoint                    | Description             |
-|--------|-----------------------------|-------------------------|
-| POST   | `/api/auth/public/register` | Register new user       |
-| POST   | `/api/auth/public/login`    | Login and get JWT token |
+### Redirect Controller
 
-### URL Mapping APIs
+| Method | Endpoint       | Parameters        | Headers | Request Body | Description              |
+|--------|----------------|-------------------|---------|--------------|--------------------------|
+| GET    | `/{shortUrl}`  | `shortUrl` (path) | None    | None         | Redirect to original URL |
 
-| Method | Endpoint                         | Description                             |
-|--------|----------------------------------|-----------------------------------------|
-| POST   | `/api/urls/shorten`              | Create short URL from original          |
-| GET    | `/api/urls/totalClicks`          | Get total clicks for authenticated user |
-| GET    | `/api/urls/myurls`               | Get all URLs created by current user    |
-| GET    | `/api/urls/analytics/{shortUrl}` | Get detailed analytics for short URL    |
+---
 
+## Schema Definitions
 
+### UrlMappingDTO
+| Field         | Type     | Description                     |
+|---------------|----------|---------------------------------|
+| id            | Long     | Unique identifier               |
+| originalUrl   | String   | Original long URL               |
+| shortUrl      | String   | Generated short URL             |
+| creationDate  | DateTime | Creation timestamp              |
+| expirationDate| DateTime | Expiration timestamp (optional) |
+| clickCount    | Integer  | Total clicks counter            |
 
-### Redirect API ↪️
+### CustomUrlRequest
+| Field       | Type   | Description               |
+|-------------|--------|---------------------------|
+| originalUrl | String | Original URL to shorten   |
+| customAlias | String | Desired custom short path |
 
-| Method | Endpoint      | Description              |
-|--------|---------------|--------------------------|
-| GET    | `/{shortUrl}` | Redirect to original URL |
+### RegisterRequest
+| Field     | Type   | Description          |
+|-----------|--------|----------------------|
+| username  | String | Email/unique ID      |
+| password  | String | Minimum 8 characters |
 
-## Authorization ⚠️
+### LoginRequest
+| Field     | Type   | Description     |
+|-----------|--------|-----------------|
+| username  | String | Registered name |
+| password  | String | Account password|
 
-All protected endpoints require JWT token in header:
+### ClickEventDTO
+| Field       | Type     | Description                |
+|-------------|----------|----------------------------|
+| timestamp   | DateTime | Click time                 |
+| referrer    | String   | Source website (optional)  |
+| userAgent   | String   | Browser/device information |
+| ipAddress   | String   | Client IP address          |
 
-```http
-Authorization: Bearer YOUR_JWT_TOKEN
+---
