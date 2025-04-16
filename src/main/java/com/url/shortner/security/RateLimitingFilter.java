@@ -15,7 +15,7 @@ public class RateLimitingFilter implements Filter {
 
     // Configure the Bucket (e.g., 10 requests per minute)
     private final Bucket bucket = Bucket.builder()
-            .addLimit(Bandwidth.classic(20, Refill.intervally(20, Duration.ofMinutes(1))))
+            .addLimit(Bandwidth.classic(100, Refill.intervally(100, Duration.ofMinutes(1))))
             .build();
 
     @Override

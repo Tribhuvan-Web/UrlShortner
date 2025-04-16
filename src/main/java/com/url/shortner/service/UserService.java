@@ -26,12 +26,9 @@ public class UserService {
     private JwtUtils jwtUtils;
 
     public User registerUser(User user) {
-
-        // Checking for the duplicate before saving the user
         if (userRepository.findByUsername(user.getUsername()).isPresent()) {
             throw new UserNameAlreadyExists("Username already exists");
         }
-
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }

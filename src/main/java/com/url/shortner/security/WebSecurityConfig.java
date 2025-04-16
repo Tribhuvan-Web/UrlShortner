@@ -56,6 +56,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/urls/**").authenticated()
+                        .requestMatchers("/api/auth/username").authenticated()
                         .requestMatchers(
                                 "/swagger-ui.html",
                                 "/swagger-ui/**",
