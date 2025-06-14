@@ -57,9 +57,7 @@ public class UrlMappingService {
     }
 
     private String generateShortUrl() {
-
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
         Random random = new Random();
         StringBuilder shortUrl = new StringBuilder(8);
 

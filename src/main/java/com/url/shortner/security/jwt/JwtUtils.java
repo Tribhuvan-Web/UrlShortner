@@ -2,10 +2,13 @@ package com.url.shortner.security.jwt;
 
 import com.url.shortner.service.UserDetailsImpl;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -22,6 +25,13 @@ public class JwtUtils {
     @Value("${jwt.expiration}")
     private int jwtExpirations;
 
+    private Key signingKey;
+
+    @PostConstruct
+    public void init() {
+        this.signingKey = Keys.hmacShaKeyFor(jwtSecret.getBytes());
+    }
+
     // Authorization > Bearer > <Token>
     public String getJwtFromHeader(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
@@ -31,7 +41,7 @@ public class JwtUtils {
     public String generateToken(UserDetailsImpl userDetails) {
         String username = userDetails.getUsername();
         String roles = userDetails.getAuthorities().stream()
-                .map(authority -> authority.getAuthority())
+                .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
         return Jwts.builder()
@@ -62,5 +72,14 @@ public class JwtUtils {
             throw new RuntimeException(e);
         }
 
+    }
+
+    public String generateJwtTokenFromEmail(String email) {
+        return Jwts.builder()
+                .setSubject(email)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date((new Date()).getTime() + jwtExpirations))
+                .signWith(signingKey, SignatureAlgorithm.HS256)
+                .compact();
     }
 }

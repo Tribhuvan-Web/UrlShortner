@@ -29,20 +29,7 @@ public class jwt {
         return (token != null && token.startsWith("Bearer ")) ? token.substring(7) : null;
     }
 
-    public String generateToken(UserDetailsImpl user) {
-        String userName = user.getUsername();
-        String roles = user.getAuthorities().stream().map(authority -> authority.getAuthority())
-                .collect(Collectors.joining(","));
-
-        return Jwts.builder()
-                .subject(userName)
-                .claim("roles", roles)
-                .issuedAt(new Date())
-                .expiration(new Date((new Date().getTime() + jwtExpirations))).signWith(key())
-                .compact();
-    }
-
-    private Key key() {
+     private Key key() {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtExpirations));
     }
 

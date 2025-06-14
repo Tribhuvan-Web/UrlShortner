@@ -6,6 +6,7 @@ import com.url.shortner.dtos.LoginRequest;
 import com.url.shortner.dtos.RegisterRequest;
 import com.url.shortner.models.User;
 import com.url.shortner.security.jwt.JwtUtils;
+import com.url.shortner.service.PasswordResetService;
 import com.url.shortner.service.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,7 +15,11 @@ import lombok.AllArgsConstructor;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -22,9 +27,44 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Authentication", description = "Authentication related APIs")
 public class AuthController {
 
-    private UserService userService;
+    private final AuthenticationManager authenticationManager;
+    private final UserService userService;
+    private final JwtUtils jwtUtils;
+    private final PasswordResetService passwordResetService;
 
-    private JwtUtils jwtUtils;
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestParam String email) {
+        try {
+            // Add basic email validation
+            if (email == null || email.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Email is required");
+            }
+
+            passwordResetService.initiatePasswordReset(email);
+            return ResponseEntity.ok("Password reset email sent");
+        } catch (RuntimeException e) {
+            // Don't reveal if user exists or not for security reasons
+            return ResponseEntity.badRequest().body("Please try again with the correct email");
+        }
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(
+            @RequestParam String token,
+            @RequestParam String newPassword) {
+
+        try {
+            // Add basic password validation
+            if (newPassword == null || newPassword.trim().length() < 6) {
+                return ResponseEntity.badRequest().body("Password must be at least 6 characters long");
+            }
+
+            passwordResetService.resetPassword(token, newPassword);
+            return ResponseEntity.ok("Password has been reset successfully");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 
     @PostMapping("/public/login")
     @Operation(summary = "Login user")
@@ -32,9 +72,9 @@ public class AuthController {
         try {
             return ResponseEntity.ok(userService.authenticateUser(loginRequest));
         } catch (UserNameNotFound e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("incorrect username or password");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorrect username or password");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Incorrect username or password");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorrect username or password");
         }
     }
 
@@ -48,7 +88,7 @@ public class AuthController {
             user.setEmail(registerRequest.getEmail());
             user.setRole("ROLE_USER");
             userService.registerUser(user);
-            return ResponseEntity.ok("User Registered successfully");
+            return ResponseEntity.ok("User registered successfully");
         } catch (UserNameAlreadyExists e) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body("Username already exists. Please try another username.");
@@ -56,10 +96,17 @@ public class AuthController {
     }
 
     @GetMapping("/username")
-    public String getUsername(@RequestHeader("Authorization") String authHeader) {
-        String token = authHeader.substring(7);
-        return jwtUtils.getUserNameFromJwtToken(token);
+    public ResponseEntity<?> getUsername(@RequestHeader("Authorization") String authHeader) {
+        try {
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                return ResponseEntity.badRequest().body("Invalid authorization header");
+            }
+
+            String token = authHeader.substring(7);
+            String username = jwtUtils.getUserNameFromJwtToken(token);
+            return ResponseEntity.ok(username);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
+        }
     }
-
 }
-

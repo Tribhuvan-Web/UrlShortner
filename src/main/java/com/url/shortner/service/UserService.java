@@ -15,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PostMapping;
 
 @Service
 @AllArgsConstructor
@@ -50,4 +51,12 @@ public class UserService {
         return userRepository.findByUsername(name).orElseThrow(
                 () -> new UsernameNotFoundException("Username " + name + " not found"));
     }
+
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(
+                () -> new UsernameNotFoundException("Username " + email + " not found"));
+
+    }
+
+
 }
