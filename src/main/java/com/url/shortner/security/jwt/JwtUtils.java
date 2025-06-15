@@ -1,6 +1,5 @@
 package com.url.shortner.security.jwt;
 
-import com.url.shortner.service.UserDetailsImpl;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -10,6 +9,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
+
+import com.url.shortner.service.userService.UserDetailsImpl;
 
 import javax.crypto.SecretKey;
 import java.security.Key;

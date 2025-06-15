@@ -1,8 +1,8 @@
-package com.url.shortner.service;
+package com.url.shortner.service.emailreset;
 
 import com.url.shortner.models.User;
 import com.url.shortner.repository.UserRepository;
-import com.url.shortner.service.emailreset.EmailService;
+
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -31,8 +31,8 @@ public class PasswordResetService {
     private final EmailService emailService;
 
     public PasswordResetService(UserRepository userRepository,
-                                PasswordEncoder passwordEncoder,
-                                EmailService emailService) {
+            PasswordEncoder passwordEncoder,
+            EmailService emailService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
@@ -40,7 +40,6 @@ public class PasswordResetService {
 
     // Generate password reset token
     public String generatePasswordResetToken(String email) {
-        Key key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
 
         return Jwts.builder()
                 .setSubject(email)

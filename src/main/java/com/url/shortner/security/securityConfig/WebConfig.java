@@ -1,4 +1,4 @@
-package com.url.shortner.security;
+package com.url.shortner.security.securityConfig;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;

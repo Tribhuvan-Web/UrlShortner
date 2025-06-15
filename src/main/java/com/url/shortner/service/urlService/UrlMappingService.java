@@ -1,4 +1,4 @@
-package com.url.shortner.service;
+package com.url.shortner.service.urlService;
 
 import com.url.shortner.Exception.CustomAliasAlreadyExistsException;
 import com.url.shortner.Exception.ResourceNotFoundException;

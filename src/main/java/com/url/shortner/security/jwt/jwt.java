@@ -1,8 +1,6 @@
-package com.url.shortner.service;
+package com.url.shortner.security.jwt;
 
 import java.security.Key;
-import java.util.Date;
-import java.util.stream.Collectors;
 
 import javax.crypto.SecretKey;
 

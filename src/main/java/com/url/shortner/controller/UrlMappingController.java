@@ -5,8 +5,9 @@ import com.url.shortner.dtos.ClickEventDTO;
 import com.url.shortner.dtos.CustomUrl;
 import com.url.shortner.dtos.UrlMappingDTO;
 import com.url.shortner.models.User;
-import com.url.shortner.service.UrlMappingService;
-import com.url.shortner.service.UserService;
+import com.url.shortner.service.urlService.UrlMappingService;
+import com.url.shortner.service.userService.UserService;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

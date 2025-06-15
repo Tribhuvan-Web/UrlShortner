@@ -1,4 +1,4 @@
-package com.url.shortner.security;
+package com.url.shortner.security.securityConfig;
 
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;

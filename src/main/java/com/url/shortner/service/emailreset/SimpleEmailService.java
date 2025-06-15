@@ -1,6 +1,5 @@
-package com.url.shortner.service;
+package com.url.shortner.service.emailreset;
 
-import com.url.shortner.service.emailreset.EmailService;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;

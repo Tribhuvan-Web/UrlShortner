@@ -6,8 +6,8 @@ import com.url.shortner.dtos.LoginRequest;
 import com.url.shortner.dtos.RegisterRequest;
 import com.url.shortner.models.User;
 import com.url.shortner.security.jwt.JwtUtils;
-import com.url.shortner.service.PasswordResetService;
-import com.url.shortner.service.UserService;
+import com.url.shortner.service.emailreset.PasswordResetService;
+import com.url.shortner.service.userService.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -15,11 +15,7 @@ import lombok.AllArgsConstructor;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -27,7 +23,6 @@ import java.util.Map;
 @Tag(name = "Authentication", description = "Authentication related APIs")
 public class AuthController {
 
-    private final AuthenticationManager authenticationManager;
     private final UserService userService;
     private final JwtUtils jwtUtils;
     private final PasswordResetService passwordResetService;

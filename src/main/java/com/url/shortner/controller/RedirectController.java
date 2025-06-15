@@ -1,7 +1,8 @@
 package com.url.shortner.controller;
 
 import com.url.shortner.models.URLMapping;
-import com.url.shortner.service.UrlMappingService;
+import com.url.shortner.service.urlService.UrlMappingService;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
