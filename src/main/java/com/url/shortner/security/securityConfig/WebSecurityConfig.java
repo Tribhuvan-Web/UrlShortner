@@ -99,7 +99,7 @@ public class WebSecurityConfig {
                                 "/swagger-resources",
                                 "/webjars/**"
                         ).permitAll()
-                        .requestMatchers("/{shortUrl}").permitAll()
+                        .requestMatchers("/{shortUrl}","/public/{shortUrl}").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

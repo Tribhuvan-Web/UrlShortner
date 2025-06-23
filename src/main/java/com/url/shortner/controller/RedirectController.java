@@ -1,6 +1,7 @@
 package com.url.shortner.controller;
 
 import com.url.shortner.models.URLMapping;
+import com.url.shortner.models.UrlMappingWithoutSignUp;
 import com.url.shortner.service.urlService.UrlMappingService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,6 +24,19 @@ public class RedirectController {
     @Operation(summary = "Redirect to original url")
     public ResponseEntity<Void> redirect(@PathVariable String shortUrl) {
         URLMapping urlMapping = urlMappingService.getOriginalUrl(shortUrl);
+        if (urlMapping != null) {
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.add("Location", urlMapping.getOriginalUrl());
+            return ResponseEntity.status(302).headers(httpHeaders).build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/public/{shortUrl}")
+    @Operation(summary = "Redirect to original url")
+    public ResponseEntity<Void> redirectWithoutSignUp(@PathVariable String shortUrl) {
+        UrlMappingWithoutSignUp urlMapping = urlMappingService.getOriginalUrlNonUser(shortUrl);
         if (urlMapping != null) {
             HttpHeaders httpHeaders = new HttpHeaders();
             httpHeaders.add("Location", urlMapping.getOriginalUrl());

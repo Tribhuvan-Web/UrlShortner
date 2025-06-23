@@ -6,8 +6,10 @@ import com.url.shortner.dtos.ClickEventDTO;
 import com.url.shortner.dtos.UrlMappingDTO;
 import com.url.shortner.models.ClickEvent;
 import com.url.shortner.models.URLMapping;
+import com.url.shortner.models.UrlMappingWithoutSignUp;
 import com.url.shortner.models.User;
 import com.url.shortner.repository.ClickEventRepository;
+import com.url.shortner.repository.URLMappings;
 import com.url.shortner.repository.UrlMappingRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -29,6 +31,8 @@ public class UrlMappingService {
     private UrlMappingRepository urlMappingRepository;
 
     private ClickEventRepository clickEventRepository;
+
+    private URLMappings urlMappings;
 
     public UrlMappingDTO createShortUrl(String originalUrl, User user) {
         String shortUrl;
@@ -112,6 +116,11 @@ public class UrlMappingService {
         return urlMapping;
     }
 
+    public UrlMappingWithoutSignUp getOriginalUrlNonUser(String shortUrl) {
+        UrlMappingWithoutSignUp urlMapping = urlMappings.findByShortUrl(shortUrl);
+        return urlMapping;
+    }
+
     @Transactional
     public void deleteUrl(Long urlId, User user) {
         URLMapping urlMapping = urlMappingRepository.findById(urlId)
@@ -136,5 +145,24 @@ public class UrlMappingService {
         urlMappingRepository.save(urlMapping);
 
         return convertToDto(urlMapping);
+    }
+
+    public UrlMappingDTO createShortUrl2(String originalUrl, User user) {
+        UrlMappingWithoutSignUp urlMappingWithoutSignUp = new UrlMappingWithoutSignUp();
+        urlMappingWithoutSignUp.setOriginalUrl(originalUrl);
+        urlMappingWithoutSignUp.setShortUrl(generateShortUrl()); // Your short URL logic
+        urlMappingWithoutSignUp.setCreatedDateTime(LocalDateTime.now());
+        urlMappingWithoutSignUp.setUser(user); // Can be null
+
+        urlMappings.save(urlMappingWithoutSignUp);
+        return convertToDto(urlMappingWithoutSignUp);
+    }
+
+    private UrlMappingDTO convertToDto(UrlMappingWithoutSignUp mapping) {
+        UrlMappingDTO dto = new UrlMappingDTO();
+        dto.setOriginalUrl(mapping.getOriginalUrl());
+        dto.setShortUrl(mapping.getShortUrl());
+        dto.setCreatedDate(mapping.getCreatedDateTime());
+        return dto;
     }
 }

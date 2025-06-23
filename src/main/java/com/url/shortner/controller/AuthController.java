@@ -4,9 +4,11 @@ import com.url.shortner.Exception.UserNameAlreadyExists;
 import com.url.shortner.Exception.UserNameNotFound;
 import com.url.shortner.dtos.LoginRequest;
 import com.url.shortner.dtos.RegisterRequest;
+import com.url.shortner.dtos.UrlMappingDTO;
 import com.url.shortner.models.User;
 import com.url.shortner.security.jwt.JwtUtils;
 import com.url.shortner.service.emailreset.PasswordResetService;
+import com.url.shortner.service.urlService.UrlMappingService;
 import com.url.shortner.service.userService.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -29,6 +32,7 @@ public class AuthController {
     private final UserService userService;
     private final JwtUtils jwtUtils;
     private final PasswordResetService passwordResetService;
+    private UrlMappingService urlMappingService;
 
     @PostMapping("/forgot-password")
     public ResponseEntity<?> forgotPassword(@RequestParam String email) {
@@ -105,5 +109,14 @@ public class AuthController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
         }
+    }
+
+    @PostMapping("/shorten")
+    @Operation(summary = "Create short URL (anonymous)")
+    public ResponseEntity<UrlMappingDTO> createAnonymousShortUrl(
+            @RequestBody Map<String, String> request) {
+
+        String originalUrl = request.get("originalUrl");
+        return ResponseEntity.ok(urlMappingService.createShortUrl2(originalUrl, null));
     }
 }
