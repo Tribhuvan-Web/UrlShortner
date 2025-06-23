@@ -37,7 +37,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
     private UserRepository userRepository;
 
     @Autowired
-    private PasswordEncoder passwordEncoder; // Required for password generation
+    private PasswordEncoder passwordEncoder;
 
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
@@ -49,10 +49,9 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
             OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
             OAuth2User oAuth2User = oauthToken.getPrincipal();
 
-            // Extract user information
             String email = oAuth2User.getAttribute("email");
             String name = oAuth2User.getAttribute("name");
-            String providerId = oAuth2User.getAttribute("sub"); // Google's unique ID
+            String providerId = oAuth2User.getAttribute("sub");
 
             // 1. Check if user exists by provider ID (Google ID)
             Optional<User> existingUser = userRepository.findByProviderAndProviderId(User.AuthProvider.GOOGLE, providerId);
@@ -67,17 +66,15 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
                 Optional<User> localUser = userRepository.findByEmail(email);
 
                 if (localUser.isPresent()) {
-                    // 3a. Existing local user: Convert to OAuth
                     user = localUser.get();
                     user.setProvider(User.AuthProvider.GOOGLE);
                     user.setProviderId(providerId);
                     logger.info("Converting local user to OAuth: {}", email);
                 } else {
-                    // 3b. New user: Create with generated password
                     user = new User();
                     user.setEmail(email);
-                    user.setUsername(email); // Use email as username
-                    user.setPassword(passwordEncoder.encode(UUID.randomUUID().toString())); // Random secure password
+                    user.setUsername(name.trim().split("@")[0]);
+                    user.setPassword(passwordEncoder.encode(UUID.randomUUID().toString()));
                     user.setRole("ROLE_USER");
                     user.setProvider(User.AuthProvider.GOOGLE);
                     user.setProviderId(providerId);
@@ -86,11 +83,9 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
                 user = userRepository.save(user);
             }
 
-            // 4. Generate JWT from UserDetails
             UserDetailsImpl userDetails = UserDetailsImpl.build(user);
             String token = tokenProvider.generateToken(userDetails);
 
-            // 5. Redirect to frontend
             String redirectUrl = frontendUrl + "/login?token=" + token;
             response.sendRedirect(redirectUrl);
 

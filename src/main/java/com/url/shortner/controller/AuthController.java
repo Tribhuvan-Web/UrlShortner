@@ -88,7 +88,7 @@ public class AuthController {
             return ResponseEntity.ok("User registered successfully");
         } catch (UserNameAlreadyExists e) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body("Username already exists. Please try another username.");
+                    .body("Username/Email already exists.");
         }
     }
 

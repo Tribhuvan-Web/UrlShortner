@@ -33,6 +33,9 @@ public class UserService {
         if (userRepository.findByUsername(user.getUsername()).isPresent()) {
             throw new UserNameAlreadyExists("Username already exists");
         }
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+            throw new UserNameAlreadyExists("Email already exists use google login");
+        }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
     }
