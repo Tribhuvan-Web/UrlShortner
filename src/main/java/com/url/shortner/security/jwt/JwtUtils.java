@@ -8,6 +8,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
 
 import com.url.shortner.service.userService.UserDetailsImpl;
@@ -38,6 +39,21 @@ public class JwtUtils {
         String bearerToken = request.getHeader("Authorization");
         return (bearerToken != null && bearerToken.startsWith("Bearer")) ? bearerToken.substring(7) : null;
     }
+
+    public String generateTokenFromOAuth2User(OAuth2User oAuth2User) {
+        String email = oAuth2User.getAttribute("email");
+        String name = oAuth2User.getAttribute("name");
+
+        return Jwts.builder()
+                .setSubject(email)
+                .claim("name", name)
+                .claim("email", email)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + jwtExpirations))
+                .signWith(SignatureAlgorithm.HS256, jwtSecret)
+                .compact();
+    }
+
 
     public String generateToken(UserDetailsImpl userDetails) {
         String username = userDetails.getUsername();

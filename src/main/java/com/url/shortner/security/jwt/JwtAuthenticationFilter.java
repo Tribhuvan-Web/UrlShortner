@@ -22,7 +22,6 @@ import jakarta.servlet.http.HttpServletResponse;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
-    // It creates an object for the class
     private JwtUtils jwtTokenProvider;
 
     @Autowired
@@ -34,7 +33,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
 
         try {
-            // GET JWT From the header
             String jwt = jwtTokenProvider.getJwtFromHeader(request);
 
             // Validate Token
@@ -45,7 +43,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 // If Valid user details
                 if (userDetails != null) {
-                    // --get UserName -> load User -> Set the auth context
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                             userDetails, null, userDetails.getAuthorities());
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
